@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shwetha Kamath — Tech Blog</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #FAFAF8;
+      --sidebar-bg: #F2F1EE;
+      --card: #FFFFFF;
+      --card-hover: #F7F6F3;
+      --accent: #B5732E;
+      --accent-soft: rgba(181,115,46,0.08);
+      --blue: #2E7AB8;
+      --blue-soft: rgba(46,122,184,0.07);
+      --green: #2D8A5A;
+      --green-soft: rgba(45,138,90,0.07);
+      --rose: #B04A5C;
+      --rose-soft: rgba(176,74,92,0.07);
+      --text: #1E1E1E;
+      --text-sec: #4A4A4A;
+      --text-dim: #8A8A8A;
+      --border: rgba(0,0,0,0.08);
+      --border-active: rgba(181,115,46,0.3);
+      --code-bg: #F5F4F0;
+    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);line-height:1.75;overflow-x:hidden}
+
+    .app{display:flex;min-height:100vh}
+
+    /* Sidebar */
+    .sidebar{width:280px;min-width:280px;background:var(--sidebar-bg);border-right:1px solid var(--border);padding:36px 0;position:fixed;top:0;left:0;bottom:0;overflow-y:auto;z-index:10;display:flex;flex-direction:column;transition:transform .3s ease}
+    .sidebar-header{padding:0 24px 32px;border-bottom:1px solid var(--border);margin-bottom:8px}
+    .sidebar-logo{font-family:'DM Serif Display',serif;font-size:1.35rem;color:var(--text);letter-spacing:-0.01em;margin-bottom:6px}
+    .sidebar-logo span{color:var(--accent)}
+    .sidebar-tagline{font-size:.78rem;color:var(--text-dim);font-weight:400;letter-spacing:.02em}
+
+    .nav-section{padding:16px 16px 4px}
+    .nav-section-label{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:var(--text-dim);padding:0 8px;margin-bottom:8px}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;margin:2px 0;border-radius:8px;cursor:pointer;font-size:.88rem;font-weight:450;color:var(--text-sec);transition:all .2s;border:1px solid transparent;text-decoration:none}
+    .nav-item:hover{background:var(--card);color:var(--text)}
+    .nav-item.active{background:var(--accent-soft);color:var(--accent);border-color:var(--border-active);font-weight:600}
+    .nav-icon{width:20px;height:20px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:.7rem;flex-shrink:0}
+    .nav-icon.orange{background:var(--accent-soft);color:var(--accent)}
+    .nav-icon.blue{background:var(--blue-soft);color:var(--blue)}
+    .nav-icon.green{background:var(--green-soft);color:var(--green)}
+    .nav-icon.rose{background:var(--rose-soft);color:var(--rose)}
+
+    .nav-tag{font-size:.6rem;font-weight:600;padding:2px 6px;border-radius:4px;margin-left:auto;text-transform:uppercase;letter-spacing:.05em}
+    .nav-tag.live{background:var(--green-soft);color:var(--green)}
+    .nav-tag.soon{background:var(--card);color:var(--text-dim)}
+
+    .sidebar-footer{margin-top:auto;padding:20px 24px;border-top:1px solid var(--border)}
+    .sidebar-footer a{font-size:.8rem;color:var(--text-dim);text-decoration:none;transition:color .2s}
+    .sidebar-footer a:hover{color:var(--accent)}
+
+    /* Mobile */
+    .hamburger{display:none;position:fixed;top:16px;left:16px;z-index:20;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px;cursor:pointer;color:var(--text)}
+    .hamburger svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2}
+    .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9}
+
+    /* Main */
+    .main{margin-left:280px;flex:1;min-width:0}
+    .content{max-width:820px;margin:0 auto;padding:48px 40px 80px}
+
+    /* Home */
+    .home-welcome{padding:80px 0 40px}
+    .hw-greeting{font-size:.75rem;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.15em;margin-bottom:20px}
+    .hw-title{font-family:'DM Serif Display',serif;font-size:clamp(2rem,4.5vw,2.8rem);line-height:1.25;margin-bottom:20px}
+    .hw-desc{font-size:1.1rem;color:var(--text-sec);max-width:560px;line-height:1.85;margin-bottom:36px}
+    .hw-instruction{display:inline-flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 22px;font-size:.9rem;color:var(--text-sec)}
+    .hw-instruction svg{width:18px;height:18px;stroke:var(--accent);fill:none;stroke-width:1.5;flex-shrink:0}
+    .hw-instruction strong{color:var(--text);font-weight:600}
+
+    /* Page */
+    .page{display:none}
+    .page.active{display:block}
+
+    .topic-header{padding-bottom:36px;border-bottom:1px solid var(--border);margin-bottom:40px}
+    .topic-tags{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+    .tag{font-size:.68rem;font-weight:650;text-transform:uppercase;letter-spacing:.07em;padding:4px 10px;border-radius:5px}
+    .tag.orange{background:var(--accent-soft);color:var(--accent)}
+    .tag.blue{background:var(--blue-soft);color:var(--blue)}
+    .tag.green{background:var(--green-soft);color:var(--green)}
+    .tag.rose{background:var(--rose-soft);color:var(--rose)}
+    .topic-header h1{font-family:'DM Serif Display',serif;font-size:clamp(1.7rem,3.5vw,2.3rem);line-height:1.3;margin-bottom:12px}
+    .topic-meta{font-size:.82rem;color:var(--text-dim);display:flex;gap:16px;flex-wrap:wrap}
+
+    /* Article body */
+    .body h2{font-family:'DM Serif Display',serif;font-size:1.4rem;margin:44px 0 14px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+    .body h3{font-size:1.08rem;font-weight:650;margin:28px 0 10px}
+    .body p{font-size:1rem;color:var(--text-sec);margin-bottom:18px;line-height:1.85}
+    .body ul,.body ol{margin:0 0 18px 22px;color:var(--text-sec)}
+    .body li{margin-bottom:8px;font-size:.98rem}
+    .body strong{color:var(--text);font-weight:600}
+
+    .callout{border-radius:8px;padding:18px 22px;margin:22px 0;font-size:.92rem;border-left:3px solid;line-height:1.75}
+    .callout.insight{background:var(--accent-soft);border-color:var(--accent)}
+    .callout.info{background:var(--blue-soft);border-color:var(--blue)}
+    .callout b{display:block;margin-bottom:4px;font-size:.85rem}
+
+    .code-block{background:var(--code-bg);border:1px solid var(--border);border-radius:8px;padding:18px 22px;margin:22px 0;overflow-x:auto;position:relative}
+    .code-label{position:absolute;top:0;right:0;font-size:.6rem;font-weight:650;text-transform:uppercase;letter-spacing:.1em;color:var(--text-dim);background:var(--card);padding:3px 10px;border-radius:0 8px 0 8px}
+    .code-block pre{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:var(--text);margin:0}
+    .ck{color:#8839AC}.cs{color:#2E7D32}.cc{color:#90A4AE;font-style:italic}.cf{color:#1565C0}.cn{color:#D84315}
+
+    .diagram{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:28px;margin:28px 0;text-align:center;overflow-x:auto}
+    .diagram svg{max-width:100%;height:auto}
+    .diagram-cap{font-size:.78rem;color:var(--text-dim);margin-top:14px;font-style:italic}
+
+    /* AWS one-liners */
+    .aws-legend{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:20px 0;font-size:.88rem}
+    .aws-legend-item{display:flex;align-items:flex-start;gap:8px;padding:10px 14px;background:var(--card);border:1px solid var(--border);border-radius:8px}
+    .aws-legend-item .aws-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:6px}
+    .aws-legend-item strong{color:var(--text);font-weight:600;display:block;font-size:.82rem;margin-bottom:2px}
+    .aws-legend-item span{color:var(--text-dim);font-size:.78rem;line-height:1.5}
+
+    /* Coming soon */
+    .coming-soon{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:100px 20px;text-align:center}
+    .coming-soon-icon{width:64px;height:64px;border-radius:16px;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin-bottom:24px}
+    .coming-soon h2{font-family:'DM Serif Display',serif;font-size:1.5rem;margin-bottom:10px}
+    .coming-soon p{color:var(--text-dim);font-size:.95rem;max-width:380px}
+
+    @keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+    .fade{animation:fadeIn .4s ease forwards}
+
+    @media(max-width:768px){
+      .sidebar{transform:translateX(-100%)}
+      .sidebar.open{transform:translateX(0)}
+      .hamburger{display:block}
+      .overlay.show{display:block}
+      .main{margin-left:0}
+      .content{padding:72px 20px 60px}
+      .aws-legend{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+
+<button class="hamburger" onclick="toggleSidebar()" aria-label="Menu">
+  <svg viewBox="0 0 24 24"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+</button>
+<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+<div class="app">
+
+  <!-- ══════ SIDEBAR ══════ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">Shwetha Kamath<span>.</span></div>
+      <div class="sidebar-tagline">Technical Knowledge Base</div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-label">Home</div>
+      <a class="nav-item active" data-page="home" onclick="navigate('home', this)">
+        <div class="nav-icon orange">⌂</div>
+        Welcome
+      </a>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-label">System Design</div>
+      <a class="nav-item" data-page="caching" onclick="navigate('caching', this)">
+        <div class="nav-icon orange">⚡</div>
+        Caching Service
+        <span class="nav-tag live">Live</span>
+      </a>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-label">Autonomous Workflows</div>
+      <a class="nav-item" data-page="aw-overview" onclick="navigate('aw-overview', this)">
+        <div class="nav-icon blue">⟳</div>
+        Overview
+        <span class="nav-tag soon">Soon</span>
+      </a>
+      <a class="nav-item" data-page="aw-eventdriven" onclick="navigate('aw-eventdriven', this)">
+        <div class="nav-icon green">⇶</div>
+        Event-Driven Pipelines
+        <span class="nav-tag soon">Soon</span>
+      </a>
+      <a class="nav-item" data-page="aw-orchestration" onclick="navigate('aw-orchestration', this)">
+        <div class="nav-icon rose">◈</div>
+        Workflow Orchestration
+        <span class="nav-tag soon">Soon</span>
+      </a>
+    </div>
+
+    <div class="sidebar-footer">
+      <a href="https://github.com/shwetha-kamath-Tech" target="_blank">GitHub ↗</a>
+    </div>
+  </aside>
+
+  <!-- ══════ MAIN ══════ -->
+  <div class="main">
+    <div class="content">
+
+      <!-- ──── HOME ──── -->
+      <div class="page active fade" id="page-home">
+        <div class="home-welcome">
+          <div class="hw-greeting">Welcome</div>
+          <h1 class="hw-title">Shwetha's Technical Blog</h1>
+          <p class="hw-desc">
+            A personal knowledge base covering systems design concepts and autonomous workflow patterns. 
+            Each topic is documented with explanations, code samples, and architecture diagrams.
+          </p>
+          <div class="hw-instruction">
+            <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+            <span>Please click on the <strong>left navigation</strong> to explore the topics.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ──── CACHING SERVICE ──── -->
+      <div class="page" id="page-caching">
+        <div class="topic-header fade">
+          <div class="topic-tags"><span class="tag orange">System Design</span><span class="tag blue">Caching</span><span class="tag green">AWS</span></div>
+          <h1>Caching Service</h1>
+          <div class="topic-meta"><span>Shwetha Kamath</span><span>April 2026</span></div>
+        </div>
+        <div class="body">
+
+          <!-- SECTION 1: What is Caching -->
+          <h2>What is Caching and Why is it Required?</h2>
+          <p>Caching is the practice of storing frequently accessed data in a temporary, fast-access storage layer so that future requests can be served without repeatedly querying the primary data source. The cached copy sits closer to the consumer — either in memory or on a dedicated caching server — and delivers data significantly faster than a full database read.</p>
+          <p>Without caching, every single request hits the database. As traffic grows, this creates a bottleneck: queries queue up, response times increase, and the database eventually becomes the weakest link in the system. Caching addresses this by absorbing the majority of read traffic, keeping the database free for writes and complex queries.</p>
+          <p><strong>Key reasons caching is required:</strong></p>
+          <ul>
+            <li><strong>Reduced latency:</strong> Serving data from an in-memory cache (microseconds) is orders of magnitude faster than querying a database (milliseconds to seconds).</li>
+            <li><strong>Lower database load:</strong> Fewer queries hit the primary database, reducing CPU usage, connection pressure, and the risk of outages under traffic spikes.</li>
+            <li><strong>Cost efficiency:</strong> In cloud environments, database compute is expensive. Caching reduces the need for frequent scaling of database instances.</li>
+            <li><strong>Improved availability:</strong> Even if the database experiences a brief outage, cached data can continue serving read requests, providing a buffer of resilience.</li>
+          </ul>
+          <div class="callout info"><b>📌 When not to cache</b>Caching is most effective for read-heavy workloads with data that doesn't change on every request. For write-heavy or real-time-critical data (like live financial transactions), caching can introduce stale data risks and may not be the right approach.</div>
+
+          <!-- SECTION 2: Core Strategies -->
+          <h2>Core Caching Strategies</h2>
+
+          <h3>1. Cache-Aside (Lazy Loading)</h3>
+          <p>In the cache-aside pattern, the application is responsible for managing the cache. When a request comes in, the application first checks the cache. If the data is found (a <strong>cache hit</strong>), it's returned immediately. If not (a <strong>cache miss</strong>), the application queries the database, stores the result in the cache for future requests, and then returns the data.</p>
+          <p>The cache is populated lazily — data is only cached when it's actually requested. This means the cache naturally fills up with the most frequently accessed data over time.</p>
+
+          <div class="code-block"><span class="code-label">Cache-Aside Pattern</span><pre><span class="ck">function</span> <span class="cf">getProduct</span>(productId) {
+  <span class="cc">// Step 1: Check the cache first</span>
+  <span class="ck">const</span> cached = cache.<span class="cf">get</span>(<span class="cs">`product:${productId}`</span>)
+  <span class="ck">if</span> (cached) {
+    <span class="cc">// Cache hit — return immediately</span>
+    <span class="ck">return</span> cached
+  }
+
+  <span class="cc">// Step 2: Cache miss — query the database</span>
+  <span class="ck">const</span> product = db.<span class="cf">query</span>(
+    <span class="cs">`SELECT * FROM products WHERE id = $1`</span>, [productId]
+  )
+
+  <span class="cc">// Step 3: Store in cache with a TTL (e.g., 5 minutes)</span>
+  cache.<span class="cf">set</span>(<span class="cs">`product:${productId}`</span>, product, { ttl: <span class="cn">300</span> })
+
+  <span class="ck">return</span> product
+}</pre></div>
+
+          <p><strong>Advantages:</strong> Only requested data gets cached (efficient memory usage), simple to implement, and the application retains full control over what enters the cache.</p>
+          <p><strong>Disadvantages:</strong> The first request for any piece of data always hits the database (cold start penalty). Under high traffic with an empty cache, many simultaneous requests can storm the database — this is known as the <strong>thundering herd</strong> problem.</p>
+
+          <h3>2. Write-Through</h3>
+          <p>In the write-through pattern, every time data is written to the database, it is also simultaneously written to the cache. This ensures the cache is always up-to-date with the latest data, eliminating stale reads entirely.</p>
+
+          <div class="code-block"><span class="code-label">Write-Through Pattern</span><pre><span class="ck">function</span> <span class="cf">updateProduct</span>(productId, data) {
+  <span class="cc">// Write to database</span>
+  db.<span class="cf">query</span>(
+    <span class="cs">`UPDATE products SET name=$1, price=$2 WHERE id=$3`</span>,
+    [data.name, data.price, productId]
+  )
+
+  <span class="cc">// Simultaneously update the cache</span>
+  cache.<span class="cf">set</span>(<span class="cs">`product:${productId}`</span>, data)
+
+  <span class="cc">// Cache and DB are always in sync</span>
+}</pre></div>
+
+          <p><strong>Advantages:</strong> Cache is always consistent with the database. Read requests never encounter stale data. Ideal for use cases where data accuracy is critical — such as inventory counts, session data, or user preferences.</p>
+          <p><strong>Disadvantages:</strong> Every write operation becomes slower because data must be written to two locations. Additionally, data that is rarely read still gets cached, which can waste cache memory.</p>
+
+          <div class="callout insight"><b>💡 Which one to choose?</b>Use <strong>Cache-Aside</strong> when your workload is read-heavy and slight staleness is acceptable (e.g., product catalogs, user profiles). Use <strong>Write-Through</strong> when data consistency between cache and database is a strict requirement (e.g., payment status, session tokens).</div>
+
+          <!-- SECTION 3: PostgreSQL as Caching with TTL -->
+          <h2>PostgreSQL as a Caching Layer with TTL</h2>
+          <p>While dedicated caching systems like Redis or Memcached are the most common choices, PostgreSQL can also be used as a caching database — particularly when you want to keep your infrastructure simpler by avoiding additional services. PostgreSQL supports expiration-like behaviour through a <strong>TTL (Time-To-Live)</strong> pattern implemented at the application or table level.</p>
+
+          <h3>How TTL Works with PostgreSQL</h3>
+          <p>TTL defines how long a cached entry is considered valid. Each cached row stores a timestamp indicating when it was inserted or last refreshed. When a read request comes in, the application checks whether the entry has expired by comparing the current time against the stored timestamp plus the TTL duration.</p>
+
+          <div class="code-block"><span class="code-label">PostgreSQL Cache Table</span><pre><span class="ck">CREATE TABLE</span> cache_store (
+  cache_key    <span class="cf">VARCHAR(255)</span> <span class="ck">PRIMARY KEY</span>,
+  cache_value  <span class="cf">JSONB</span> <span class="ck">NOT NULL</span>,
+  created_at   <span class="cf">TIMESTAMP</span> <span class="ck">DEFAULT</span> <span class="cf">NOW</span>(),
+  ttl_seconds  <span class="cf">INTEGER</span> <span class="ck">DEFAULT</span> <span class="cn">300</span>  <span class="cc">-- 5 minutes</span>
+);
+
+<span class="cc">-- Read with TTL check</span>
+<span class="ck">SELECT</span> cache_value <span class="ck">FROM</span> cache_store
+<span class="ck">WHERE</span> cache_key = <span class="cs">'product:101'</span>
+  <span class="ck">AND</span> created_at + (ttl_seconds * <span class="cf">INTERVAL</span> <span class="cs">'1 second'</span>) > <span class="cf">NOW</span>();
+
+<span class="cc">-- Periodic cleanup of expired entries</span>
+<span class="ck">DELETE FROM</span> cache_store
+<span class="ck">WHERE</span> created_at + (ttl_seconds * <span class="cf">INTERVAL</span> <span class="cs">'1 second'</span>) < <span class="cf">NOW</span>();</pre></div>
+
+          <h3>Why TTL is Required</h3>
+          <ul>
+            <li><strong>Prevents stale data:</strong> Without TTL, cached data lives forever. If the source data changes, the cache serves outdated information indefinitely, leading to incorrect results.</li>
+            <li><strong>Automatic memory management:</strong> TTL ensures old entries are cleaned up, preventing the cache table from growing unbounded and consuming excessive disk space.</li>
+            <li><strong>Balances freshness and performance:</strong> TTL lets you control exactly how stale you're willing to let data get — 30 seconds for fast-changing data, 10 minutes for stable data.</li>
+          </ul>
+
+          <h3>Without TTL: The Fallback</h3>
+          <p>If TTL is not implemented, cached data never expires. This leads to several problems:</p>
+          <ul>
+            <li><strong>Stale data served indefinitely:</strong> A product price updated in the source database will continue to show the old price from the cache until someone manually invalidates it.</li>
+            <li><strong>Unbounded cache growth:</strong> The cache table grows continuously. Old, unused entries accumulate, consuming storage and slowing down queries on the cache table itself.</li>
+            <li><strong>Manual invalidation burden:</strong> Without TTL, every code path that modifies source data must also explicitly delete or update the cache. Missing even one path creates inconsistencies that are difficult to debug.</li>
+          </ul>
+          <div class="callout info"><b>📌 Best practice</b>Always define a TTL, even if it's generous (e.g., 1 hour). It acts as a safety net — ensuring the cache self-corrects over time, even if explicit invalidation is missed somewhere in the code.</div>
+
+          <!-- SECTION 3b: Architecture Diagram -->
+          <h2>Complete Caching Architecture on AWS</h2>
+          <p>The diagram below shows how caching fits into a typical AWS-hosted application stack. The request flows from the end user through multiple layers — each serving a specific purpose — before reaching the database.</p>
+
+          <div class="diagram">
+            <svg viewBox="0 0 780 520" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0,0 L10,5 L0,10 z" fill="#8A8A8A"/>
+                </marker>
+                <marker id="arr-accent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0,0 L10,5 L0,10 z" fill="#B5732E"/>
+                </marker>
+                <marker id="arr-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0,0 L10,5 L0,10 z" fill="#2D8A5A"/>
+                </marker>
+                <marker id="arr-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0,0 L10,5 L0,10 z" fill="#2E7AB8"/>
+                </marker>
+              </defs>
+
+              <!-- Row 1: Users -->
+              <rect x="310" y="15" width="160" height="44" rx="8" fill="#FFFFFF" stroke="#B0B0B0" stroke-width="1"/>
+              <text x="390" y="42" text-anchor="middle" fill="#1E1E1E" font-family="Outfit,sans-serif" font-size="13" font-weight="600">End Users</text>
+
+              <!-- Arrow -->
+              <line x1="390" y1="59" x2="390" y2="90" stroke="#8A8A8A" stroke-width="1.5" marker-end="url(#arr)"/>
+
+              <!-- Row 2: CloudFront CDN -->
+              <rect x="280" y="94" width="220" height="44" rx="8" fill="#FFFFFF" stroke="#2E7AB8" stroke-width="1.5"/>
+              <text x="390" y="121" text-anchor="middle" fill="#2E7AB8" font-family="Outfit,sans-serif" font-size="12" font-weight="600">Amazon CloudFront (CDN)</text>
+
+              <!-- Arrow -->
+              <line x1="390" y1="138" x2="390" y2="170" stroke="#2E7AB8" stroke-width="1.5" marker-end="url(#arr-blue)"/>
+
+              <!-- Row 3: ALB -->
+              <rect x="270" y="174" width="240" height="44" rx="8" fill="#FFFFFF" stroke="#B5732E" stroke-width="1.5"/>
+              <text x="390" y="200" text-anchor="middle" fill="#B5732E" font-family="Outfit,sans-serif" font-size="12" font-weight="600">Application Load Balancer (ALB)</text>
+
+              <!-- Arrow -->
+              <line x1="390" y1="218" x2="390" y2="250" stroke="#B5732E" stroke-width="1.5" marker-end="url(#arr-accent)"/>
+
+              <!-- Row 4: API Gateway -->
+              <rect x="280" y="254" width="220" height="44" rx="8" fill="#FFFFFF" stroke="#2D8A5A" stroke-width="1.5"/>
+              <text x="390" y="280" text-anchor="middle" fill="#2D8A5A" font-family="Outfit,sans-serif" font-size="12" font-weight="600">API Gateway / AppSync</text>
+
+              <!-- Arrow down to App -->
+              <line x1="390" y1="298" x2="390" y2="330" stroke="#2D8A5A" stroke-width="1.5" marker-end="url(#arr-green)"/>
+
+              <!-- Row 5: Application Layer -->
+              <rect x="290" y="334" width="200" height="44" rx="8" fill="#FFFFFF" stroke="#B0B0B0" stroke-width="1.5"/>
+              <text x="390" y="360" text-anchor="middle" fill="#1E1E1E" font-family="Outfit,sans-serif" font-size="12" font-weight="600">Application / Resolvers</text>
+
+              <!-- Branch: Left to Cache, Right to DB -->
+              <!-- Left arrow to Cache -->
+              <path d="M290 356 L160 356 L160 430" stroke="#B5732E" stroke-width="1.5" fill="none" marker-end="url(#arr-accent)"/>
+              <text x="210" y="348" fill="#B5732E" font-family="Outfit,sans-serif" font-size="9" font-weight="500">1. Check cache</text>
+
+              <!-- Right arrow to DB -->
+              <path d="M490 356 L620 356 L620 430" stroke="#2D8A5A" stroke-width="1.5" fill="none" stroke-dasharray="6,4" marker-end="url(#arr-green)"/>
+              <text x="530" y="348" fill="#2D8A5A" font-family="Outfit,sans-serif" font-size="9" font-weight="500">2. Cache miss → query DB</text>
+
+              <!-- Cache Box -->
+              <rect x="80" y="434" width="160" height="50" rx="8" fill="#FFFFFF" stroke="#B5732E" stroke-width="1.5"/>
+              <text x="160" y="455" text-anchor="middle" fill="#B5732E" font-family="Outfit,sans-serif" font-size="11" font-weight="600">PostgreSQL Cache</text>
+              <text x="160" y="473" text-anchor="middle" fill="#8A8A8A" font-family="Outfit,sans-serif" font-size="9">(with TTL)</text>
+
+              <!-- DB Box -->
+              <rect x="540" y="434" width="160" height="50" rx="8" fill="#FFFFFF" stroke="#2D8A5A" stroke-width="1.5"/>
+              <text x="620" y="455" text-anchor="middle" fill="#2D8A5A" font-family="Outfit,sans-serif" font-size="11" font-weight="600">Primary Database</text>
+              <text x="620" y="473" text-anchor="middle" fill="#8A8A8A" font-family="Outfit,sans-serif" font-size="9">(PostgreSQL / RDS)</text>
+
+              <!-- Populate cache arrow -->
+              <path d="M540 470 L240 470" stroke="#8A8A8A" stroke-width="1" fill="none" stroke-dasharray="4,3" marker-end="url(#arr)"/>
+              <text x="390" y="492" text-anchor="middle" fill="#8A8A8A" font-family="Outfit,sans-serif" font-size="9">3. Populate cache on miss</text>
+
+              <!-- GraphQL label -->
+              <rect x="570" y="270" width="130" height="28" rx="6" fill="rgba(46,122,184,0.06)" stroke="rgba(46,122,184,0.25)" stroke-width="1"/>
+              <text x="635" y="289" text-anchor="middle" fill="#2E7AB8" font-family="Outfit,sans-serif" font-size="9" font-weight="500">GraphQL via AppSync</text>
+              <line x1="500" y1="276" x2="568" y2="280" stroke="rgba(46,122,184,0.35)" stroke-width="1" stroke-dasharray="3,3"/>
+            </svg>
+            <div class="diagram-cap">End-to-end caching architecture — request flows from user through CDN, load balancer, API gateway (AppSync), application layer, then cache or database</div>
+          </div>
+
+          <!-- AWS One-liners -->
+          <div class="aws-legend">
+            <div class="aws-legend-item">
+              <div class="aws-dot" style="background:#2E7AB8"></div>
+              <div><strong>Amazon CloudFront (CDN)</strong><span>A Content Delivery Network that caches static assets at edge locations globally, reducing latency by serving content from the server nearest to the user.</span></div>
+            </div>
+            <div class="aws-legend-item">
+              <div class="aws-dot" style="background:#B5732E"></div>
+              <div><strong>Application Load Balancer (ALB)</strong><span>Distributes incoming application traffic across multiple targets (servers, containers) based on request content such as URL path or host headers.</span></div>
+            </div>
+            <div class="aws-legend-item">
+              <div class="aws-dot" style="background:#2D8A5A"></div>
+              <div><strong>API Gateway / AppSync</strong><span>A managed service that acts as the front door for APIs — handling request routing, authentication, throttling, and in the case of AppSync, serving GraphQL endpoints.</span></div>
+            </div>
+            <div class="aws-legend-item">
+              <div class="aws-dot" style="background:#8A8A8A"></div>
+              <div><strong>Amazon RDS (PostgreSQL)</strong><span>A managed relational database service that handles provisioning, patching, backups, and scaling of PostgreSQL instances in the cloud.</span></div>
+            </div>
+          </div>
+
+          <!-- SECTION 4: GraphQL via AppSync -->
+          <h2>Data Retrieval with GraphQL via AWS AppSync</h2>
+          <p>In this architecture, data is retrieved using <strong>GraphQL</strong> served through <strong>AWS AppSync</strong>. Instead of traditional REST endpoints, the client sends GraphQL queries that describe exactly what data is needed, and AppSync resolves those queries against the backend data sources (including the cache layer and the primary database).</p>
+
+          <h3>What is GraphQL?</h3>
+          <p>GraphQL is a query language for APIs developed by Facebook. Unlike REST, where each endpoint returns a fixed structure, GraphQL lets the client specify the exact fields it needs in a single request. The server returns only that data — nothing more, nothing less.</p>
+
+          <div class="code-block"><span class="code-label">GraphQL Query Example</span><pre><span class="cc"># Client requests only what it needs</span>
+query {
+  <span class="cf">product</span>(id: <span class="cs">"101"</span>) {
+    <span class="ck">name</span>
+    <span class="ck">price</span>
+    <span class="ck">category</span> {
+      <span class="ck">name</span>
+    }
+  }
+}
+
+<span class="cc"># Response — no over-fetching, no under-fetching</span>
+{
+  <span class="cs">"data"</span>: {
+    <span class="cs">"product"</span>: {
+      <span class="cs">"name"</span>: <span class="cs">"Wireless Headphones"</span>,
+      <span class="cs">"price"</span>: <span class="cn">2499</span>,
+      <span class="cs">"category"</span>: { <span class="cs">"name"</span>: <span class="cs">"Electronics"</span> }
+    }
+  }
+}</pre></div>
+
+          <h3>Why GraphQL?</h3>
+          <ul>
+            <li><strong>No over-fetching:</strong> REST endpoints often return entire objects even when the client needs only two fields. GraphQL eliminates this waste — the client gets precisely what it asks for, reducing payload size and bandwidth.</li>
+            <li><strong>No under-fetching:</strong> In REST, fetching related data (e.g., a product and its category) often requires multiple API calls to different endpoints. GraphQL resolves nested relationships in a single query.</li>
+            <li><strong>Single endpoint:</strong> Instead of managing dozens of REST endpoints (<code>/products</code>, <code>/products/:id</code>, <code>/categories</code>), GraphQL operates through one endpoint. The query itself defines what data to return.</li>
+            <li><strong>Strongly typed schema:</strong> GraphQL enforces a schema that defines every type, field, and relationship. This serves as a contract between frontend and backend teams, reducing miscommunication and integration errors.</li>
+            <li><strong>Efficient for mobile clients:</strong> Mobile apps on slower networks benefit significantly from receiving only the data they need, reducing load times and data consumption.</li>
+          </ul>
+
+          <h3>Benefits of AWS AppSync</h3>
+          <p>AWS AppSync is a fully managed GraphQL service that removes the operational burden of running your own GraphQL server. Key benefits include:</p>
+          <ul>
+            <li><strong>Managed infrastructure:</strong> No servers to provision or scale — AppSync automatically handles traffic spikes.</li>
+            <li><strong>Built-in caching:</strong> AppSync supports server-side caching at the resolver level, which pairs well with the PostgreSQL caching strategy described above.</li>
+            <li><strong>Real-time subscriptions:</strong> AppSync natively supports WebSocket-based subscriptions, allowing clients to receive live updates when data changes.</li>
+            <li><strong>Multiple data source integration:</strong> A single AppSync API can connect to DynamoDB, RDS (PostgreSQL), Lambda functions, HTTP endpoints, and more — making it flexible for complex architectures.</li>
+            <li><strong>Fine-grained authorization:</strong> AppSync integrates with Cognito, IAM, and API keys, giving precise control over who can query or mutate specific data.</li>
+          </ul>
+
+          <div class="callout insight"><b>💡 GraphQL + Caching</b>When AppSync resolves a query, the resolver can first check the PostgreSQL cache table (with TTL). On a cache hit, the response is immediate. On a miss, the resolver queries the primary database, populates the cache, and returns the data — implementing the cache-aside pattern at the resolver level.</div>
+
+        </div>
+      </div>
+
+      <!-- ──── AUTONOMOUS WORKFLOWS: Coming Soon ──── -->
+      <div class="page" id="page-aw-overview">
+        <div class="coming-soon fade">
+          <div class="coming-soon-icon">⟳</div>
+          <h2>Autonomous Workflows — Overview</h2>
+          <p>Coming soon. This section will cover the principles of autonomous systems — self-healing architectures, event-driven automation, and reducing manual intervention in operational workflows.</p>
+        </div>
+      </div>
+      <div class="page" id="page-aw-eventdriven">
+        <div class="coming-soon fade">
+          <div class="coming-soon-icon">⇶</div>
+          <h2>Event-Driven Pipelines</h2>
+          <p>Coming soon. This article will explore event-driven architecture using message queues, pub/sub patterns, and serverless triggers for building reactive data pipelines.</p>
+        </div>
+      </div>
+      <div class="page" id="page-aw-orchestration">
+        <div class="coming-soon fade">
+          <div class="coming-soon-icon">◈</div>
+          <h2>Workflow Orchestration</h2>
+          <p>Coming soon. Covering orchestration engines like AWS Step Functions, Airflow, and n8n for coordinating multi-step automated processes.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  function navigate(pageId, el) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    const target = document.getElementById('page-' + pageId);
+    if (target) {
+      target.classList.add('active');
+      const faders = target.querySelectorAll('.fade');
+      faders.forEach(f => { f.style.animation = 'none'; f.offsetHeight; f.style.animation = ''; });
+    }
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    if (el) el.classList.add('active');
+    window.scrollTo(0, 0);
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('overlay').classList.remove('show');
+  }
+
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('overlay').classList.toggle('show');
+  }
+</script>
+
+</body>
+</html>
